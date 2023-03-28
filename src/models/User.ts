@@ -20,6 +20,9 @@ export interface IUsers extends ITimeStampedDocument {
   isDeactivated: Boolean;
   /** Phone Number */
   phone: String;
+  /** Profile Completed */
+  isProfileCompleted: Boolean;
+
 }
 
 interface IUsersModel extends Model<IUsers> { }
@@ -33,7 +36,8 @@ const schema = new Schema<IUsers>({
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Number },
   isDeactivated: { type: Boolean, default: false },
-  phone: {type: String}
+  phone: {type: String},
+  isProfileCompleted: { type: Boolean, default: false }
 });
 
 // Add timestamp plugin for createdAt and updatedAt in miliseconds from epoch

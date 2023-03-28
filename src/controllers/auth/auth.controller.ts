@@ -30,18 +30,18 @@ export const signup = async (req: Request, res: Response) => {
       return res.status(200).json({
         success: true,
         userId: createdUser._id,
-        message: 'Admin is successfully Added.'
+        message: 'User is successfully Added.'
       });
     }
   } catch (e) {
     logger.error({
       level: 'debug',
-      message: `Internal Server Error occurred while adding a new adming  , ${e}`,
+      message: `Internal Server Error occurred while adding a new user  , ${e}`,
       consoleLoggerOptions: { label: 'API' }
     });
     return res.status(500).json({
       success: false,
-      message: 'Internal Server Error occurred while adding a new adming'
+      message: 'Internal Server Error occurred while adding a new user'
     });
   }
 };
