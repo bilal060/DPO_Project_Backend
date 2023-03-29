@@ -61,3 +61,17 @@ export const resetPassword = async (req: Request, res: Response, next: () => voi
   }
   return next();
 }
+
+
+export const getAllUsers = async (req: Request, res: Response, next: () => void) => {
+	const schema = Joi.object({
+		email: Joi.string().label('email'),
+		pageNumber: Joi.number().required().label('pageNumber'),
+		pageSize: Joi.number().required().label('pageSize'),
+	});
+	const { error } = schema.validate(req.body);
+	if (error) {
+		return res.status(422).json({ message: error.details[0].message });
+	}
+	return next();
+}
