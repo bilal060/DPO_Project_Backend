@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Companies from '../../models/Company';
+import Users from '../../models/User';
 import logger from '../../logger';
 import { findMissingObjectValues } from '../../helpers/missingCredentials.helper';
 
@@ -88,26 +89,108 @@ export const CompanyProfileInformation = async (req: Request, res: Response) => 
             propertyPhotos
         },
         { new: true });
+        if (!companyDetails) {
+            logger.log({
+                level: 'debug',
+                message: 'Error while updating company details.',
+                consoleLoggerOptions: { label: 'API' }
+            });
+            return res.status(200).json({
+                success: false,
+                message: 'Error while updating company details.'
+            });
+        }
         logger.log({
             level: 'debug',
-            message: 'Company details are successfully Added.',
+            message: 'Company details are successfully Updated.',
             consoleLoggerOptions: { label: 'API' }
         });
         return res.status(200).json({
             success: true,
             company: companyDetails,
-            message: 'Company details are successfully Added'
+            message: 'Company details are successfully Updated'
         });
       
     } catch (e) {
       logger.error({
         level: 'debug',
-        message: `Internal Server Error occurred while adding company details  , ${e}`,
+        message: `Internal Server Error occurred while updating company details  , ${e}`,
         consoleLoggerOptions: { label: 'API' }
       });
       return res.status(500).json({
         success: false,
-        message: 'Internal Server Error occurred while adding company details'
+        message: 'Internal Server Error occurred while updating company details'
+      });
+    }
+};
+
+export const CompanyPaymentInformation = async (req: Request, res: Response) => {
+    const { bankName, bankAddress, routingNumber, accountNumber, profileCompletionStep, companyId } = req.body;
+    const missingValue = await findMissingObjectValues ({  bankName, bankAddress, routingNumber, accountNumber, profileCompletionStep, companyId })
+    if (missingValue) {
+        logger.log({
+            level: 'debug',
+            message: missingValue,
+            consoleLoggerOptions: { label: 'API' }
+          });
+          return res.status(422).json({
+            success: false,
+            message: missingValue
+          });
+    }
+    try {
+        const companyDetails = await Companies.findOneAndUpdate({ _id: companyId }, {
+            bankName, bankAddress, routingNumber, accountNumber, profileCompletionStep
+        },
+        { new: true });
+        if (!companyDetails) {
+            logger.log({
+                level: 'debug',
+                message: 'Error while updating company details.',
+                consoleLoggerOptions: { label: 'API' }
+            });
+            return res.status(200).json({
+                success: false,
+                message: 'Error while updating company details.'
+            });
+        } else if (companyDetails) {
+            const usersUpdation = await Users.findOneAndUpdate({ _id: companyDetails.companyCredentials }, {
+                isProfileCompleted:  true
+            },
+            { new: true });
+            if (!usersUpdation) {
+                logger.log({
+                    level: 'debug',
+                    message: 'Error while updating company credentials details.',
+                    consoleLoggerOptions: { label: 'API' }
+                });
+                return res.status(200).json({
+                    success: false,
+                    message: 'Error while updating company credentials details.'
+                });
+            }
+
+        }
+        logger.log({
+            level: 'debug',
+            message: 'Company Payment details are successfully Updated.',
+            consoleLoggerOptions: { label: 'API' }
+        });
+        return res.status(200).json({
+            success: true,
+            company: companyDetails,
+            message: 'Company Payment details are successfully Updated'
+        });
+      
+    } catch (e) {
+      logger.error({
+        level: 'debug',
+        message: `Internal Server Error occurred while updating company details  , ${e}`,
+        consoleLoggerOptions: { label: 'API' }
+      });
+      return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error occurred while updating company details'
       });
     }
 };
