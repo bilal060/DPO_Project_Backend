@@ -6,11 +6,11 @@ import { hashData } from '../../helpers/dataHashing.helper';
 
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
-		const { pageNumber, pageSize, email } = req.body;
+		const { pageNumber, pageSize, type } = req.body;
 		const limit = isNaN(pageSize) ? 25 : Number(pageSize)
 		const skip = pageNumber > 0 ? limit * pageNumber : 0
 		const aggregatedMatch = [];
-		email && aggregatedMatch.push({ "$match": { "email": { $regex: `.*${email}.*`, $options: 'i' } } });
+		type && aggregatedMatch.push({ "$match": { "type": { $regex: `.*${type}.*`, $options: 'i' } } });
 		const query = [
 			...aggregatedMatch,
 			{
