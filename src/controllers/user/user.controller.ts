@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import Users from '../../models/User';
 import logger from '../../logger';
+import { hashData } from '../../helpers/dataHashing.helper';
+
 
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
@@ -56,4 +58,143 @@ export const getAllUsers = async (req: Request, res: Response) => {
 		});
 	}
 };
+
+export const addNewUser = async (req: Request, res: Response) => {
+    const { email, password, type } = req.body;
+  
+    const HASHED_PASSWORD = await hashData(password);
+  
+    try {
+      const userCredential = await Users.findOne({ email: email });
+      if (userCredential) {
+        return res.status(200).json({
+          success: false,
+          message: 'Account Already Exist against this Email.'
+        });
+      } else {
+        const createdUser = new Users({ email, password: HASHED_PASSWORD, type })
+        await createdUser.save();
+  
+        logger.log({
+          level: 'debug',
+          message: 'User is successfully Added.',
+          consoleLoggerOptions: { label: 'API' }
+        });
+        return res.status(200).json({
+          success: true,
+          userId: createdUser._id,
+          message: 'User is successfully Added.'
+        });
+      }
+    } catch (e) {
+      logger.error({
+        level: 'debug',
+        message: `Internal Server Error occurred while adding a new user  , ${e}`,
+        consoleLoggerOptions: { label: 'API' }
+      });
+      return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error occurred while adding a new user'
+      });
+    }
+};
+
+
+export const changeUserRole = async (req: Request, res: Response) => {
+    const { id, type } = req.body;
+    try {
+      const updatedUser = await Users.findOneAndUpdate({ _id: id }, {
+            type
+        },
+        { new: true });
+      if (updatedUser) {
+        logger.log({
+          level: 'debug',
+          message: 'User Role is successfully Updated.',
+          consoleLoggerOptions: { label: 'API' }
+        });
+        return res.status(200).json({
+          success: true,
+          message: 'User Role is successfully Updated.'
+        });
+      }
+    } catch (e) {
+      logger.error({
+        level: 'debug',
+        message: `Internal Server Error occurred while updating user role  , ${e}`,
+        consoleLoggerOptions: { label: 'API' }
+      });
+      return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error occurred while updating user role '
+      });
+    }
+};
+  
+  
+
+
+export const userActivation = async (req: Request, res: Response) => {
+    const { id, isDeactivated } = req.body;
+    try {
+      const updatedUser = await Users.findOneAndUpdate({ _id: id }, {
+        isDeactivated
+        },
+        { new: true });
+      const message = isDeactivated ? 'User is successfully Deactivated' : 'User is successfully Activated';
+      if (updatedUser) {
+        logger.log({
+          level: 'debug',
+          message,
+          consoleLoggerOptions: { label: 'API' }
+        });
+        return res.status(200).json({
+          success: true,
+          message
+        });
+      }
+    } catch (e) {
+      logger.error({
+        level: 'debug',
+        message: `Internal Server Error occurred while updating user activation status  , ${e}`,
+        consoleLoggerOptions: { label: 'API' }
+      });
+      return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error occurred while updating user activation status  '
+      });
+    }
+};
+  
+
+
+
+export const userDeletion = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+      const deletedUser = await Users.deleteOne({ _id: id });
+      if (deletedUser) {
+        logger.log({
+          level: 'debug',
+          message : 'User is successfully deleted.',
+          consoleLoggerOptions: { label: 'API' }
+        });
+        return res.status(200).json({
+          success: true,
+          message : 'User is successfully deleted.',
+        });
+      }
+    } catch (e) {
+      logger.error({
+        level: 'debug',
+        message: `Internal Server Error occurred while deleting user  , ${e}`,
+        consoleLoggerOptions: { label: 'API' }
+      });
+      return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error occurred while deleting user  '
+      });
+    }
+};
+  
 

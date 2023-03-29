@@ -9,7 +9,7 @@ export const signup = async (req: Request, res: Response, next: () => void) => {
       .label('email'),
     password: Joi.string().required().label('password'),
     type: Joi.string().required().label('type'),
-    phone: Joi.string().required().label('phone')
+    phone: Joi.string().label('phone')
   });
   const { error } = schema.validate(req.body);
   if (error) {
@@ -75,3 +75,46 @@ export const getAllUsers = async (req: Request, res: Response, next: () => void)
 	}
 	return next();
 }
+
+export const changeUserRole = async (req: Request, res: Response, next: () => void) => {
+  const schema = Joi.object({
+    id: Joi.string()
+      .required()
+      .label('id'),
+    type: Joi.string().required().label('type')
+  });
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(422).json({ message: error.details[0].message });
+  }
+  return next();
+}
+
+
+export const userActivation = async (req: Request, res: Response, next: () => void) => {
+  const schema = Joi.object({
+    id: Joi.string()
+      .required()
+      .label('id'),
+      isDeactivated: Joi.boolean().required().label('isDeactivated')
+  });
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(422).json({ message: error.details[0].message });
+  }
+  return next();
+}
+
+export const userDeletion = async (req: Request, res: Response, next: () => void) => {
+  const schema = Joi.object({
+    id: Joi.string()
+      .required()
+      .label('id'),
+  });
+  const { error } = schema.validate(req.params);
+  if (error) {
+    return res.status(422).json({ message: error.details[0].message });
+  }
+  return next();
+}
+
