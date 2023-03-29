@@ -13,6 +13,7 @@ import {
     identificationProof: string,
     companyProfilePicture: string;
     companyDescription: string;
+    companyLocation: string;
     availableSpace: string;
     propertyPhotos: Array<String>;
     bankName: String;
@@ -32,9 +33,11 @@ import {
     owndershipProof: { type: String },
     identificationProof: { type: String },
     companyDescription: { type: String },
+    companyLocation: { type: String },
     availableSpace: { type: String },
     propertyPhotos: {type: Array},
     bankName: { type: String },
+    companyProfilePicture: { type: String },
     bankAddress: { type: String },
     routingNumber: { type: String },
     accountNumber: { type: String },
