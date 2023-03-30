@@ -146,7 +146,8 @@ export const getParkingSpaceDetails = async (req: Request, res: Response) => {
 };
 
 export const updateParkingDetails = async (req: Request, res: Response) => {
-    const { parkingSpaceId, name, location, noOfParkingSpaces, perDayCost, perMonthCost, description, longitude, latitude, owner, manager } = req.body;
+    const { id } = req.params;
+    const { name, location, noOfParkingSpaces, perDayCost, perMonthCost, description, longitude, latitude, owner, manager } = req.body;
     const missingValue = await findMissingObjectValues ({ name, location, noOfParkingSpaces, perDayCost, perMonthCost, description })
     if (missingValue) {
         logger.log({
@@ -163,7 +164,7 @@ export const updateParkingDetails = async (req: Request, res: Response) => {
         const files: any = req?.files;
         let images: any = [];
         if (files.length) {
-            const parkingSpaceDetails = await ParkingSpace.findById(parkingSpaceId);
+            const parkingSpaceDetails = await ParkingSpace.findById(id);
             if (!parkingSpaceDetails) {
                 logger.log({
                     level: 'debug',
@@ -182,8 +183,8 @@ export const updateParkingDetails = async (req: Request, res: Response) => {
             }
             
         }
-		const updatedParkingSpace = await ParkingSpace.findOneAndUpdate({ _id: parkingSpaceId }, {
-            parkingSpaceId, name, location, noOfParkingSpaces, perDayCost, perMonthCost, description, longitude, latitude, owner, manager, images
+		const updatedParkingSpace = await ParkingSpace.findOneAndUpdate({ _id: id }, {
+            name, location, noOfParkingSpaces, perDayCost, perMonthCost, description, longitude, latitude, owner, manager, images
         },
         { new: true });
         if (updatedParkingSpace) {
