@@ -18,5 +18,3 @@ export const CompanyPaymentInformation = async (req: Request, res: Response, nex
   }
   return next();
 }
-
-// bankName, bankAddress, routingNumber, accountNumber, profileCompletionStep, companyId

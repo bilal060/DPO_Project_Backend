@@ -118,3 +118,94 @@ export const getAllParkingSpaces = async (req: Request, res: Response) => {
 		});
 	}
 };
+
+export const getParkingSpaceDetails = async (req: Request, res: Response) => {
+    try {
+		const { id } = req.params;
+		const parkingSpaceDetails = await ParkingSpace.findById(id);
+		  logger.log({
+			level: 'debug',
+			message: "Getting Parking Space Details",
+			consoleLoggerOptions: { label: 'API' }
+		  });
+		  return res.status(200).json({
+			success: true,
+			parkingSpaceDetails
+		  });
+	} catch (e) {
+		logger.log({
+			level: 'debug',
+			message: `Error while Getting Parking Space Details , ${e}`,
+			consoleLoggerOptions: { label: 'API' }
+		});
+		return res.status(500).json({
+			success: false,
+			message: 'Error while Getting Parking space Details'
+		});
+	}
+};
+
+export const updateParkingDetails = async (req: Request, res: Response) => {
+    const { parkingSpaceId, name, location, noOfParkingSpaces, perDayCost, perMonthCost, description, longitude, latitude, owner, manager } = req.body;
+    const missingValue = await findMissingObjectValues ({ name, location, noOfParkingSpaces, perDayCost, perMonthCost, description })
+    if (missingValue) {
+        logger.log({
+            level: 'debug',
+            message: missingValue,
+            consoleLoggerOptions: { label: 'API' }
+            });
+            return res.status(422).json({
+            success: false,
+            message: missingValue
+            });
+    }
+    try {
+        const files: any = req?.files;
+        let images: any = [];
+        if (files.length) {
+            const parkingSpaceDetails = await ParkingSpace.findById(parkingSpaceId);
+            if (!parkingSpaceDetails) {
+                logger.log({
+                    level: 'debug',
+                    message: 'Error while updating parking details.',
+                    consoleLoggerOptions: { label: 'API' }
+                });
+                return res.status(200).json({
+                    success: true,
+                    message: 'Error while updating parking details.'
+                });
+            } else {
+                images = [...parkingSpaceDetails.images]
+                for(let i = 1; i< files.length ; i++) {
+                    images.push(files[i].path)
+                }
+            }
+            
+        }
+		const updatedParkingSpace = await ParkingSpace.findOneAndUpdate({ _id: parkingSpaceId }, {
+            parkingSpaceId, name, location, noOfParkingSpaces, perDayCost, perMonthCost, description, longitude, latitude, owner, manager, images
+        },
+        { new: true });
+        if (updatedParkingSpace) {
+            logger.log({
+                level: 'debug',
+                message: 'Parking Space is successfully Updated.',
+                consoleLoggerOptions: { label: 'API' }
+            });
+            return res.status(200).json({
+                success: true,
+                message: 'Parking Space is successfully Updated.'
+            });
+        }
+	} catch (e) {
+		logger.log({
+			level: 'debug',
+			message: `Error while updating Parking Space Details , ${e}`,
+			consoleLoggerOptions: { label: 'API' }
+		});
+		return res.status(500).json({
+			success: false,
+			message: 'Error while updating Parking space Details'
+		});
+	}
+};

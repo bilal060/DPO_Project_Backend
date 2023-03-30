@@ -13,3 +13,17 @@ export const getAllParkingSpaces = async (req: Request, res: Response, next: () 
 	}
 	return next();
 }
+
+export const getParkingSpaceDetails = async (req: Request, res: Response, next: () => void) => {
+    const schema = Joi.object({
+      id: Joi.string()
+        .required()
+        .label('id'),
+    });
+    const { error } = schema.validate(req.params);
+    if (error) {
+      return res.status(422).json({ message: error.details[0].message });
+    }
+    return next();
+  }
+  

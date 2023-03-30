@@ -13,8 +13,7 @@ app.use(cors({
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
 }));
-app.use(express.static('public'))
-app.use('/uploads', express.static('uploads'));
+app.use('/src/uploads', express.static('src/uploads'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
