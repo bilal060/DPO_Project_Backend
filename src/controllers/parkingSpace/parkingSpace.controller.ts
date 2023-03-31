@@ -210,3 +210,47 @@ export const updateParkingDetails = async (req: Request, res: Response) => {
 		});
 	}
 };
+
+export const assignUserToParkingSpace =  async (req: Request, res: Response) => {
+    const { type, value, id } = req.body;
+    console.log({ type, value, id })
+    const missingValue = await findMissingObjectValues ({ type, value })
+    if (missingValue) {
+        logger.log({
+            level: 'debug',
+            message: missingValue,
+            consoleLoggerOptions: { label: 'API' }
+            });
+            return res.status(422).json({
+            success: false,
+            message: missingValue
+            });
+    }
+    try {
+		const updatedParkingSpace = await ParkingSpace.findOneAndUpdate({ _id: id }, {
+            [type]: value
+        },
+        { new: true });
+        if (updatedParkingSpace) {
+            logger.log({
+                level: 'debug',
+                message: 'User is successfully Attached to Parking Space.',
+                consoleLoggerOptions: { label: 'API' }
+            });
+            return res.status(200).json({
+                success: true,
+                message: 'User is successfully Attached to Parking Space.'
+            });
+        }
+	} catch (e) {
+		logger.log({
+			level: 'debug',
+			message: `Error while updating Parking Space Details , ${e}`,
+			consoleLoggerOptions: { label: 'API' }
+		});
+		return res.status(500).json({
+			success: false,
+			message: 'Error while updating Parking space Details'
+		});
+	}
+};
