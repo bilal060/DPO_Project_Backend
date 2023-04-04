@@ -213,18 +213,17 @@ export const updateParkingDetails = async (req: Request, res: Response) => {
 
 export const assignUserToParkingSpace =  async (req: Request, res: Response) => {
     const { type, value, id } = req.body;
-    console.log({ type, value, id })
-    const missingValue = await findMissingObjectValues ({ type, value })
-    if (missingValue) {
+    const types = ['owner', 'manager']
+    if (!types.includes(type)) {
         logger.log({
             level: 'debug',
-            message: missingValue,
+            message: `Type must be either 'owner' or 'manager'.`,
             consoleLoggerOptions: { label: 'API' }
             });
             return res.status(422).json({
             success: false,
-            message: missingValue
-            });
+            message: `Type must be either 'owner' or 'manager'.`
+        });
     }
     try {
 		const updatedParkingSpace = await ParkingSpace.findOneAndUpdate({ _id: id }, {

@@ -26,4 +26,21 @@ export const getParkingSpaceDetails = async (req: Request, res: Response, next: 
     }
     return next();
   }
+
   
+  
+
+  export const assignUserToParkingSpace = async (req: Request, res: Response, next: () => void) => {
+    const schema = Joi.object({
+      id: Joi.string()
+        .required()
+        .label('id'),
+        type: Joi.string().required().label('type'),
+		    value: Joi.string().required().label('value'),
+    });
+    const { error } = schema.validate(req.body);
+    if (error) {
+      return res.status(422).json({ message: error.details[0].message });
+    }
+    return next();
+  }

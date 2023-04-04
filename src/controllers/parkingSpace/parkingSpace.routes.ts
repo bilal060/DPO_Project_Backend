@@ -9,7 +9,7 @@ router.route('/addNewParkingSpace').post(upload.array('files'), ParkingSpaceCont
 router.route('/getAllParkingSpaces').post(ParkingSpaceValidator.getAllParkingSpaces, ParkingSpaceController.getAllParkingSpaces);
 router.route('/:id').get(ParkingSpaceValidator.getParkingSpaceDetails, ParkingSpaceController.getParkingSpaceDetails);
 router.route('/:id').put(upload.array('files'), ParkingSpaceController.updateParkingDetails);
-router.route('/assignUserToParkingSpace').patch(ParkingSpaceController.assignUserToParkingSpace);
+router.route('/assignUserToParkingSpace').patch(ParkingSpaceValidator.assignUserToParkingSpace, ParkingSpaceController.assignUserToParkingSpace);
 
 
 export default router

@@ -31,7 +31,7 @@ const schema = new Schema<IUsers>({
   email: { type: String, index: true, required: true },
   password: { type: String, required: true },
   type: {
-    type: String, required: true, default: "admin", enum: ["admin", "owner", "manager"]
+    type: String, required: true, default: "admin", enum: ["admin", "owner", "manager", "user"]
   },
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Number },
