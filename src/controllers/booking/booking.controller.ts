@@ -105,14 +105,14 @@ export const getAllBookings = async (req: Request, res: Response) => {
 
  export const parkingSpaceBookings = async (req: Request, res: Response) => {
     try {
-		const { parkingSpaceId, pageNumber, pageSize, startDate, endDate } = req.body;
+		const { parkingSpaceId, pageNumber, pageSize, startDate, endDate, bookingStatus } = req.body;
 		const aggregatedMatch = [];
         const limit = isNaN(pageSize) ? 25 : Number(pageSize)
 		const skip = pageNumber > 0 ? limit * pageNumber : 0;
-        console.log(parkingSpaceId)
         aggregatedMatch.push({ "$match": { "parkingSpaceId": new ObjectId(parkingSpaceId) } });
-        startDate && aggregatedMatch.push({ "$match": { "startDate": { $gte: startDate} } })
-        endDate && aggregatedMatch.push({ "$match": { "endDate": { $lte: endDate} } })
+        startDate && aggregatedMatch.push({ "$match": { "startDate": { $gte: startDate} } });
+        endDate && aggregatedMatch.push({ "$match": { "endDate": { $lte: endDate} } });
+        bookingStatus && aggregatedMatch.push({ "$match": { "bookingStatus": bookingStatus }});
 		const query = [
 			...aggregatedMatch,
 			{

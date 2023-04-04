@@ -45,7 +45,8 @@ export const addBooking = async (req: Request, res: Response, next: () => void) 
       endDate: Joi.number().label('endDate'),
       pageNumber: Joi.number().required().label('pageNumber'),
       pageSize: Joi.number().required().label('pageSize'),
-      parkingSpaceId: Joi.string().label('parkingSpaceId')
+      parkingSpaceId: Joi.string().label('parkingSpaceId'),
+      bookingStatus: Joi.string().label('bookingStatus')
     });
     const { error } = schema.validate(req.body);
     if (error) {
